@@ -20,10 +20,7 @@ app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" } // Allow images to be loaded from different origins
 }));
 app.use(
-    cors({
-        origin: process.env.CLIENT_URL || 'http://localhost:5173',
-        credentials: true,
-    })
+    cors()
 );
 app.use(morgan('dev'));
 app.use(express.json());
