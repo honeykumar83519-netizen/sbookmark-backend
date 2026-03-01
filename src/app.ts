@@ -17,13 +17,14 @@ const app: Application = express();
 
 // Middleware
 app.use(helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" } // Allow images to be loaded from different origins
+  crossOriginResourcePolicy: { policy: "cross-origin" } // Allow images to be loaded from different origins
 }));
 app.use(
   cors({
     origin: [
       "https://sbookmark.link",
       "http://localhost:3000",
+      "http://localhost:5173",
     ],
     credentials: true,
   })
@@ -38,7 +39,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Health check
 app.get('/health', (_req: Request, res: Response) => {
-    res.json({ status: 'OK', message: 'LinkHive API is running' });
+  res.json({ status: 'OK', message: 'LinkHive API is running' });
 });
 
 // Routes
@@ -50,10 +51,10 @@ app.use('/api/blogs', blogRoutes);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
-    res.status(404).json({
-        success: false,
-        message: 'Route not found',
-    });
+  res.status(404).json({
+    success: false,
+    message: 'Route not found',
+  });
 });
 
 // Error handler (must be last)

@@ -8,6 +8,7 @@ export interface IBlog extends Document {
     image: string;
     category: string;
     tags: string[];
+    slug?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -42,6 +43,11 @@ const blogSchema = new Schema<IBlog>(
         tags: {
             type: [String],
             default: [],
+        },
+        slug: {
+            type: String,
+            unique: true,
+            sparse: true,
         },
     },
     {

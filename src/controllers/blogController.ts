@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import Blog from '../models/Blog';
 
 // @desc    Get all blogs
@@ -57,7 +58,11 @@ export const getBlogs = async (req: Request, res: Response) => {
 // @access  Public
 export const getBlogById = async (req: Request, res: Response) => {
     try {
-        const blog = await Blog.findById(req.params.id);
+        const query = mongoose.isValidObjectId(req.params.id)
+            ? { $or: [{ _id: req.params.id }, { slug: req.params.id }] }
+            : { slug: req.params.id };
+
+        const blog = await Blog.findOne(query);
         if (blog) {
             res.json(blog);
         } else {
@@ -81,6 +86,12 @@ export const createBlog = async (req: Request, res: Response) => {
             imagePath = `/uploads/${req.file.filename}`;
         }
 
+        let slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        const existing = await Blog.findOne({ slug });
+        if (existing) {
+            slug = `${slug}-${Date.now().toString().slice(-4)}`;
+        }
+
         const blog = new Blog({
             title,
             content,
@@ -88,7 +99,8 @@ export const createBlog = async (req: Request, res: Response) => {
             image: imagePath,
             category,
             tags,
-            author: 'Admin', // Static for now, or can be req.user.username
+            slug,
+            author: 'SBookmark Team', // Set to SBookmark Team instead of Admin
         });
 
         const createdBlog = await blog.save();
