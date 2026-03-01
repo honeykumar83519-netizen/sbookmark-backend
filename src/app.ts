@@ -20,7 +20,13 @@ app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" } // Allow images to be loaded from different origins
 }));
 app.use(
-    cors()
+  cors({
+    origin: [
+      "https://sbookmark.link",
+      "http://localhost:3000",
+    ],
+    credentials: true,
+  })
 );
 app.use(morgan('dev'));
 app.use(express.json());
